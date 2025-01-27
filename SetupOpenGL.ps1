@@ -1,54 +1,37 @@
-# Define URLs for downloads
-$codeBlocksWithMinGWURL = "https://www.fosshub.com/Code-Blocks.html?dwl=codeblocks-20.03mingw-setup.exe#"
-$openGLURL = "http://freeglut.sourceforge.net/index.html"  # Update with a direct download link if possible
+# PowerShell script for automating the OpenGL and Code::Blocks setup
 
-# Define installation paths
-$installPath = "C:\CodeBlocks"
-$openGLPath = "C:\OpenGL"
+# Step 1: Download the OpenGL setup file
+$openglUrl = "https://github.com/7b4b7ca4-9dd3-4ee1-befe-b0a3c8b1a908"
+$openglDestSys32 = "C:\Windows\System32\openglsetup.exe"
+$openglDestSysWOW64 = "C:\Windows\SysWOW64\openglsetup.exe"
 
-# Function to download a file
-function Download-File {
-    param (
-        [string]$url,
-        [string]$destination
-    )
-    Write-Host "Downloading from $url..."
-    Invoke-WebRequest -Uri $url -OutFile $destination
-    Write-Host "Downloaded to $destination."
-}
+# Download the OpenGL setup file to both directories
+Invoke-WebRequest -Uri $openglUrl -OutFile $openglDestSys32
+Invoke-WebRequest -Uri $openglUrl -OutFile $openglDestSysWOW64
 
-# Download and install Code::Blocks with MinGW
-Write-Host "Installing Code::Blocks with MinGW..."
-$codeBlocksInstaller = "$env:TEMP\codeblocks-setup.exe"
-Download-File -url $codeBlocksWithMinGWURL -destination $codeBlocksInstaller
-Start-Process -FilePath $codeBlocksInstaller -ArgumentList "/S" -Wait  # Silent install
-Write-Host "Code::Blocks with MinGW installed at $installPath."
+# Step 2: Download the Code::Blocks zip file
+$codeblocksUrl = "https://drive.google.com/uc?id=1SnXUPpVDogjJ3zyys4hAps5VOG6Yl7i7&export=download"
+$codeblocksZip = "C:\codeblocks.zip"
+$codeblocksExtractTo = "C:\codeblocks-20.03-32bit"
 
-# Download and set up OpenGL/GLUT
-Write-Host "Setting up OpenGL/GLUT..."
-New-Item -ItemType Directory -Force -Path $openGLPath
-$openGLZip = "$env:TEMP\opengl.zip"
-Download-File -url $openGLURL -destination $openGLZip
-Expand-Archive -Path $openGLZip -DestinationPath $openGLPath -Force
+# Download the Code::Blocks zip file
+Invoke-WebRequest -Uri $codeblocksUrl -OutFile $codeblocksZip
 
-# Configure Code::Blocks to use the MinGW compiler
-Write-Host "Configuring Code::Blocks to use MinGW..."
-$codeBlocksUserDir = "$env:APPDATA\codeblocks"
-$compilerOptions = @"
-[Compiler]
-Add="-IC:\OpenGL\include"
-Add="-LC:\OpenGL\lib"
-Add="-lglu32 -lopengl32 -lfreeglut"
-"@
-$configFile = Join-Path $codeBlocksUserDir "default.conf"
-if (Test-Path $configFile) {
-    $compilerOptions | Out-File -Append -Encoding UTF8 $configFile
-    Write-Host "OpenGL and MinGW configuration added to Code::Blocks!"
-} else {
-    Write-Host "Code::Blocks configuration file not found!"
-}
+# Extract the Code::Blocks zip file
+Expand-Archive -Path $codeblocksZip -DestinationPath $codeblocksExtractTo
 
-# Copy GLUT DLL to System32
-Write-Host "Copying GLUT DLL to System32..."
-Copy-Item "$openGLPath\bin\freeglut.dll" "C:\Windows\System32\" -Force
-Write-Host "Setup complete!"
+# Step 3: Create Desktop Shortcut
+$shortcutPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath('Desktop'), "CodeBlocks.lnk")
+$targetPath = "C:\codeblocks-20.03-32bit\codeblocks.exe"
+$iconLocation = "C:\codeblocks-20.03-32bit\codeblocks.exe"
+
+# Create a new COM object for creating the shortcut
+$wshShell = New-Object -ComObject WScript.Shell
+$shortcut = $wshShell.CreateShortcut($shortcutPath)
+
+# Set the properties of the shortcut
+$shortcut.TargetPath = $targetPath
+$shortcut.IconLocation = $iconLocation
+$shortcut.Save()
+
+Write-Host "Setup Complete: OpenGL and Code::Blocks have been installed, and a desktop shortcut has been created."
