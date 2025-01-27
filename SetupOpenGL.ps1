@@ -1,5 +1,5 @@
 # Define URLs for downloads
-$codeBlocksWithMinGWURL = "https://www.fosshub.com/Code-Blocks.html?dwl=codeblocks-20.03mingw-setup.exe"
+$codeBlocksWithMinGWURL = "https://www.fosshub.com/Code-Blocks.html?dwl=codeblocks-20.03mingw-setup.exe#"
 $openGLURL = "http://freeglut.sourceforge.net/index.html"  # Update with a direct download link if possible
 
 # Define installation paths
