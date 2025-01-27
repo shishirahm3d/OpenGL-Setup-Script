@@ -9,9 +9,7 @@ This PowerShell script automates the installation and setup of **Code::Blocks wi
 
 ## How to Use
 
-### Prerequisites
-- **Windows Operating System**
-- **PowerShell** (default on Windows)
+### PowerShell (Windows 10/11)
 
 ### Instructions
 
