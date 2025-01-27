@@ -21,4 +21,4 @@ This PowerShell script automates the installation and setup of **Code::Blocks wi
 2. **Run the Setup Script**:
    - Copy and paste the following command into the PowerShell window:
    ```powershell
-   Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/shishirahm3d/OpenGL-Setup-Script/main/SetupOpenGL.ps1" -UseBasicP)
+   iwr -useb https://raw.githubusercontent.com/shishirahm3d/OpenGL-Setup-Script/main/SetupOpenGL.ps1 | iex
